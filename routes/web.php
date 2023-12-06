@@ -81,6 +81,7 @@ Route::middleware(['auth', 'checkRole:admin,kasir,owner'])->group(function () {
 
     // Outlet
     Route::get('owner/outlet', [OutletController::class, 'owner'])->name('owner.outlet');
+
     Route::get('json/outlet/owner', [OutletController::class, 'jsonOwner'])->name('json.outlet.owner');
 
     // Laporan
@@ -94,8 +95,7 @@ Route::middleware(['auth', 'checkRole:admin,kasir,owner'])->group(function () {
     // Ganti Password
     Route::get('/ganti/{user}/kata-sandi', [AuthController::class, 'gantiKs'])->name('ganti.ks');
     Route::post('/ganti/{user}/kata-sandi', [AuthController::class, 'updatePw'])->name('pengguna.gantiPw');
+
+
 });
 
-// Continue with the rest of your routes...
-
-// Additional routes based on the provided code

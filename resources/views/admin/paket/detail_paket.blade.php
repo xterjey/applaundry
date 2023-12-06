@@ -86,136 +86,137 @@
     <script>
         $(".select2").select2();
     </script>
-    <script>
-        var idOutlet = {{ $jquin->id }};
-        
-        // Data Table
-    	var table = $('#data-paket').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "/json/paket/" + idOutlet,
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'nama_paket', name: 'nama_paket'},
-                    {data: 'jenis', name: 'jenis'},
-                    {data: 'harga', name: 'harga'},
-                    {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
+<script>
+    var idOutlet = {{ $jquin->id }};
+    
+    // Data Table
+    var table = $('#data-paket').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/paket') }}/" + idOutlet,
+        columns: [
+            {data: 'DT_RowIndex', name:'DT_RowIndex'},
+            {data: 'nama_paket', name: 'nama_paket'},
+            {data: 'jenis', name: 'jenis'},
+            {data: 'harga', name: 'harga'},
+            {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
 
-        // Tampil Form
-        function tampilForm() {
-            save_method = "add";
-            $('input[name=_method]').val('POST');
-            $('#form-cu').modal('show');
-            $('#form-cu form')[0].reset();
-            $('#form-store-paket').text("Tambah Paket");
-        }
+    // Tampil Form
+    function tampilForm() {
+        save_method = "add";
+        $('input[name=_method]').val('POST');
+        $('#form-cu').modal('show');
+        $('#form-cu form')[0].reset();
+        $('#form-store-paket').text("Tambah Paket");
+    }
 
-        /////////////////
-        // Update Data //
-        /////////////////
-        $(function () {
-             $('#form-update form').on('submit', function (e) {
-                if (!e.isDefaultPrevented()) {
-                var id = $('#id').val();
-                url = "{{ url('paket') . '/' }}" + id;
+    /////////////////
+    // Update Data //
+    /////////////////
+    $(function () {
+         $('#form-update form').on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
+            var id = $('#id').val();
+            url = "{{ secure_url('paket') . '/' }}" + id;
 
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: $("#form-update form").serialize(),
-                        success: function($data) {
-                            $("#form-update").modal('hide');
-                            table.ajax.reload();
-                            toastr.success('Data Berhasil Diperbharui','Sukses');
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    });
-                    return false;
-                }
-            });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $("#form-update form").serialize(),
+                    success: function($data) {
+                        $("#form-update").modal('hide');
+                        table.ajax.reload();
+                        toastr.success('Data Berhasil Diperbharui','Sukses');
+                    },
+                    error: function () {
+                        Swal.fire(
+                          'Opps!',
+                          'Terjadi Error...!',
+                          'error',
+                          '1500'
+                        )
+                    }
+                });
+                return false;
+            }
         });
+    });
 
-        ///////////////
-        // Ubah Data //
-        /////////////
-        function update(id) {
-            save_method = "edit";
-            $('input[name=_method]').val('PATCH');
-            $('#form-update form')[0].reset();
+    ///////////////
+    // Ubah Data //
+    /////////////
+    function update(id) {
+        save_method = "edit";
+        $('input[name=_method]').val('PATCH');
+        $('#form-update form')[0].reset();
 
-            $.ajax({
-                url: "{{ url('paket') }}" + '/' + id + '/edit',
-                type: "GET",
-                dataType: "JSON",
-                success: function (jquin) {
-                    $('#form-update').modal('show');
-                    $('.modal-title').text('Edit Paket');
+        $.ajax({
+            url: "{{ secure_url('paket') }}" + '/' + id + '/edit',
+            type: "GET",
+            dataType: "JSON",
+            success: function (jquin) {
+                $('#form-update').modal('show');
+                $('.modal-title').text('Edit Paket');
 
-                    $('#id').val(jquin.id);
-                    $('#unamaPaket').val(jquin.nama_paket);
-                    $('#ujenis').val(jquin.jenis);
-                    $('#uharga').val(jquin.harga);
-                },
-                error : function () {
-                    Swal.fire(
-                      'Opps!',
-                      'Terjadi Error...!',
-                      'error',
-                      '1500'
-                    )
-                }
-            });
-        }
+                $('#id').val(jquin.id);
+                $('#unamaPaket').val(jquin.nama_paket);
+                $('#ujenis').val(jquin.jenis);
+                $('#uharga').val(jquin.harga);
+            },
+            error : function () {
+                Swal.fire(
+                  'Opps!',
+                  'Terjadi Error...!',
+                  'error',
+                  '1500'
+                )
+            }
+        });
+    }
 
-        /////////////////
-        // Hapus Data  //
-        /////////////////
-        function destroy(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-  
-            Swal.fire({
-              title: 'Hapus!',
-              text: "Paket Dengan ID "+ id +"?",
-              type: 'warning',
-              showCancelButton: true,
-              cancelButtonColor: '#d33',
-              cancelButtonText: 'Batal',
-              confirmButtonColor: '#00B5B8',
-              confirmButtonText: 'Oke',
-              reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ url('paket') }}" + '/' + id,
-                        type: "POST",
-                        data: {'_method' : 'DELETE', '_token' : csrf_token},
-                        success: function (data) {
-                            table.ajax.reload();
-                            toastr.success('Data Berhasil Dihapus','Sukses');
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    })
-                }
-            })
-        }
-    </script>
+    /////////////////
+    // Hapus Data  //
+    /////////////////
+    function destroy(id) {
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+          title: 'Hapus!',
+          text: "Paket Dengan ID "+ id +"?",
+          type: 'warning',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Batal',
+          confirmButtonColor: '#00B5B8',
+          confirmButtonText: 'Oke',
+          reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: "{{ secure_url('paket') }}" + '/' + id,
+                    type: "POST",
+                    data: {'_method' : 'DELETE', '_token' : csrf_token},
+                    success: function (data) {
+                        table.ajax.reload();
+                        toastr.success('Data Berhasil Dihapus','Sukses');
+                    },
+                    error: function () {
+                        Swal.fire(
+                          'Opps!',
+                          'Terjadi Error...!',
+                          'error',
+                          '1500'
+                        )
+                    }
+                })
+            }
+        })
+    }
+</script>
+
 @stop

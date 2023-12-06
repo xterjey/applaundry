@@ -76,213 +76,199 @@
         $(".select2").select2();
         $(".jq-bs-validation").jqBootstrapValidation();
     </script>
-    
-    <script>
-        // Data Table
-    	var table = $('#data-outlet').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('json.outlet') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'nama', name: 'nama'},
-                    // {data: 'pemilik', name: 'pemilik'},
-                    {data: 'tlp', name: 'tlp'},
-                    {data: 'alamat', name: 'alamat'},
-                    {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
 
-        /////////////////
-        // Tampil Form //
-        /////////////////
-        function tampilForm() {
-            save_method = "add";
-            $('input[name=_method]').val('POST');
-            $('#form-cu').modal('show');
-            $('#form-cu form')[0].reset();
-            $('#form-store-outlet').text("Tambah Outlet");
-            $(".btn-outline-primary").show();
-        }
+<script>
+    // Data Table
+    var table = $('#data-outlet').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/outlet') }}", // Use secure_url for the JSON endpoint
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+            { data: 'nama', name: 'nama' },
+            { data: 'tlp', name: 'tlp' },
+            { data: 'alamat', name: 'alamat' },
+            { data: 'opsi', name: 'opsi', orderable: false, searchable: false }
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
 
-        /////////////////
-        // Tambah Data //
-        /////////////////
-        $(function () {
-             $('#form-cu form').on('submit', function (e) {
-                if (!e.isDefaultPrevented()) {
+    // Tampil Form
+    function tampilForm() {
+        save_method = "add";
+        $('input[name=_method]').val('POST');
+        $('#form-cu').modal('show');
+        $('#form-cu form')[0].reset();
+        $('#form-store-outlet').text("Tambah Outlet");
+        $(".btn-outline-primary").show();
+    }
+
+    // Tambah Data
+    $(function () {
+        $('#form-cu form').on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
                 var id = $('#id').val();
-                if (save_method == 'add') url = "{{ url('outlet') }}";
-                else url = "{{ url('outlet') . '/' }}" + id;
+                if (save_method == 'add') url = "{{ secure_url('outlet') }}";
+                else url = "{{ secure_url('outlet') . '/' }}" + id;
 
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: $("#form-cu form").serialize(),
-                        success: function($data) {
-                            $("#form-cu").modal('hide');
-                            table.ajax.reload();
-                            
-                            if (save_method == 'add') {
-                                toastr.success('Data Berhasil Ditambahkan','Sukses');
-                            } else {
-                                toastr.success('Data Berhasil Diperbharui','Sukses');
-                            }
-                        },
-                        error: function () {
-                            alert("Opps! Error...!");
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $("#form-cu form").serialize(),
+                    success: function ($data) {
+                        $("#form-cu").modal('hide');
+                        table.ajax.reload();
+
+                        if (save_method == 'add') {
+                            toastr.success('Data Berhasil Ditambahkan', 'Sukses');
+                        } else {
+                            toastr.success('Data Berhasil Diperbharui', 'Sukses');
                         }
-                    });
-                    return false;
-                }
-            });
+                    },
+                    error: function () {
+                        alert("Opps! Error...!");
+                    }
+                });
+                return false;
+            }
         });
+    });
 
+    // Tampil Detail
+    function tampilDetail(id) {
+        save_method = "tampilDetail";
+        $('input[name=_method]').val('GET');
+        $('#form-cu form')[0].reset();
 
-        ///////////////////
-        // Tampil Detail //
-        ///////////////////
-        function tampilDetail(id) {
-            save_method = "tampilDetail";
-            $('input[name=_method]').val('GET');
-            $('#form-cu form')[0].reset();
+        $.ajax({
+            url: "{{ secure_url('outlet') }}" + '/' + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function (data) {
+                $("#form-tampil").modal('show');
+                $(".modal-title").text("Detail Outlet");
+                $(".btn-outline-secondary").text("Tutup");
+                $(".btn-outline-primary").hide();
 
-            $.ajax({
-                url: "{{ url('outlet') }}"+ '/' + id,
-                type: "GET",
-                dataType: "JSON",
-                success: function (data) {
-                    $("#form-tampil").modal('show');
-                    $(".modal-title").text("Detail Outlet");
-                    $(".btn-outline-secondary").text("Tutup");
-                    $(".btn-outline-primary").hide();
+                // Disable Input
+                $("#tnamaOutlet").prop('disabled', true);
+                $("#tnoTelpon").prop('disabled', true);
+                $("#talamat").prop('disabled', true);
 
-                    // Disable Input
-                    $("#tnamaOutlet").prop('disabled', true);
-                    $("#tnoTelpon").prop('disabled', true);
-                    $("#talamat").prop('disabled', true);
+                $('#ids').val(data.id);
+                $('#tnamaOutlet').val(data.nama);
+                $('#tnoTelpon').val(data.tlp);
+                $('#talamat').val(data.alamat);
+            },
+            error: function () {
+                Swal.fire(
+                    'Opps!',
+                    'Terjadi Error...!',
+                    'error',
+                    '1500'
+                )
+            }
+        })
+    }
 
-                    $('#ids').val(data.id);
-                    $('#tnamaOutlet').val(data.nama);
-                    $('#tnoTelpon').val(data.tlp);
-                    $('#talamat').val(data.alamat);
-                },
-                error: function () {
-                    Swal.fire(
-                      'Opps!',
-                      'Terjadi Error...!',
-                      'error',
-                      '1500'
-                    )
-                }
-            })
-        }
+    // Edit Data
+    function update(id) {
+        $('input[name=_method]').val('PATCH');
+        $('#form-tampil form')[0].reset();
 
-        ///////////////
-        // Edit Data //
-        /////////////
-        function update(id) {
-            // save_method = "edit";
-            $('input[name=_method]').val('PATCH');
-            $('#form-tampil form')[0].reset();
+        $.ajax({
+            url: "{{ secure_url('outlet') }}" + '/' + id + '/edit',
+            type: "GET",
+            dataType: "JSON",
+            success: function (jquin) {
+                $('#form-tampil').modal('show');
+                $('.modal-title').text('Edit Outlet');
+                $(".btn-outline-primary").show();
 
-            $.ajax({
-                url: "{{ url('outlet') }}" + '/' + id + '/edit',
-                type: "GET",
-                dataType: "JSON",
-                success: function (jquin) {
-                    $('#form-tampil').modal('show');
-                    $('.modal-title').text('Edit Outlet');
-                    $(".btn-outline-primary").show();
+                // Enable Input
+                $("#tnamaOutlet").prop('disabled', false);
+                $("#tnoTelpon").prop('disabled', false);
+                $("#talamat").prop('disabled', false);
 
-                    // Enable Input
-                    $("#tnamaOutlet").prop('disabled', false);
-                    $("#tnoTelpon").prop('disabled', false);
-                    $("#talamat").prop('disabled', false);
+                $('#ids').val(jquin.id);
+                $('#tnamaOutlet').val(jquin.nama);
+                $('#tnoTelpon').val(jquin.tlp);
+                $('#talamat').val(jquin.alamat);
+            },
+            error: function () {
+                Swal.fire(
+                    'Opps!',
+                    'Terjadi Error...!',
+                    'error',
+                    '1500'
+                )
+            }
+        });
+    }
 
-                    $('#ids').val(jquin.id);
-                    $('#tnamaOutlet').val(jquin.nama);
-                    $('#tnoTelpon').val(jquin.tlp);
-                    $('#talamat').val(jquin.alamat);
-                },
-                error : function () {
-                    Swal.fire(
-                      'Opps!',
-                      'Terjadi Error...!',
-                      'error',
-                      '1500'
-                    )
-                }
-            });
-        }
-
-        ////////////////////////////////////
-        // Update Data Dengan Form Tampil //
-        ////////////////////////////////////
-        $(function () {
-             $('#form-tampil form').on('submit', function (e) {
-                if (!e.isDefaultPrevented()) {
+    // Update Data Dengan Form Tampil
+    $(function () {
+        $('#form-tampil form').on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
                 var id = $('#ids').val();
-                    url = "outlet/" + id + "/update";
+                url = "{{ secure_url('outlet') }}" + '/' + id + "/update";
 
-                    $.ajax({
-                        url: url,
-                        type: "PATCH",
-                        data: $("#form-tampil form").serialize(),
-                        success: function($data) {
-                            $("#form-tampil").modal('hide');
-                            table.ajax.reload();
-                            toastr.success('Data Berhasil Diperbharui','Sukses');
-                        },
-                        error: function () {
-                            alert("Opps! Error...!");
-                        }
-                    });
-                    return false;
-                }
-            });
+                $.ajax({
+                    url: url,
+                    type: "PATCH",
+                    data: $("#form-tampil form").serialize(),
+                    success: function ($data) {
+                        $("#form-tampil").modal('hide');
+                        table.ajax.reload();
+                        toastr.success('Data Berhasil Diperbharui', 'Sukses');
+                    },
+                    error: function () {
+                        alert("Opps! Error...!");
+                    }
+                });
+                return false;
+            }
         });
+    });
 
-        /////////////////
-        // Hapus Data  //
-        /////////////////
-        function destroy(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-  
-            Swal.fire({
-              title: 'Hapus!',
-              text: "Outlet Dengan ID "+ id +"?",
-              type: 'warning',
-              showCancelButton: true,
-              cancelButtonColor: '#d33',
-              cancelButtonText: 'Batal',
-              confirmButtonColor: '#00B5B8',
-              confirmButtonText: 'Oke',
-              reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ url('outlet') }}" + '/' + id,
-                        type: "POST",
-                        data: {'_method' : 'DELETE', '_token' : csrf_token},
-                        success: function (data) {
-                            toastr.success('Data Berhasil Dihapus','Sukses');
-                            table.ajax.reload();
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    })
-                }
-            })
-        }
-    </script>
+    // Hapus Data
+    function destroy(id) {
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+            title: 'Hapus!',
+            text: "Outlet Dengan ID " + id + "?",
+            type: 'warning',
+            showCancelButton: true,
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#00B5B8',
+            confirmButtonText: 'Oke',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: "{{ secure_url('outlet') }}" + '/' + id,
+                    type: "POST",
+                    data: { '_method': 'DELETE', '_token': csrf_token },
+                    success: function (data) {
+                        toastr.success('Data Berhasil Dihapus', 'Sukses');
+                        table.ajax.reload();
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Opps!',
+                            'Terjadi Error...!',
+                            'error',
+                            '1500'
+                        )
+                    }
+                })
+            }
+        })
+    }
+</script>
+    
 @stop

@@ -71,141 +71,141 @@
     <!-- Radio -->
     <script src="{{asset('admin/app-assets/js/scripts/forms/checkbox-radio.min.js')}}"></script>
 
-    <script>
-        // Data Table
-    	var table = $('#data-pelanggan').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('json.pelanggan') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'nama', name: 'nama'},
-                    {data: 'jenis_kelamin', name: 'jenis_kelamin'},
-                    {data: 'tlp', name: 'tlp'},
-                    {data: 'alamat', name: 'alamat'},
-                    {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
+<script>
+    // Data Table
+    var table = $('#data-pelanggan').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/pelanggan') }}",
+        columns: [
+            {data: 'DT_RowIndex', name:'DT_RowIndex'},
+            {data: 'nama', name: 'nama'},
+            {data: 'jenis_kelamin', name: 'jenis_kelamin'},
+            {data: 'tlp', name: 'tlp'},
+            {data: 'alamat', name: 'alamat'},
+            {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
 
-        /////////////////
-        // Tampil Form //
-        /////////////////
-        function tampilForm() {
-            save_method = "add";
-            $('input[name=_method]').val('POST');
-            $('#form-cu').modal('show');
-            $('#form-cu form')[0].reset();
-            $('#form-store-pelanggan').text("Tambah Pelanggan");
-        }
+    /////////////////
+    // Tampil Form //
+    /////////////////
+    function tampilForm() {
+        save_method = "add";
+        $('input[name=_method]').val('POST');
+        $('#form-cu').modal('show');
+        $('#form-cu form')[0].reset();
+        $('#form-store-pelanggan').text("Tambah Pelanggan");
+    }
 
-        /////////////////
-        // Tambah Data //
-        /////////////////
-        $(function () {
-             $('#form-cu form').on('submit', function (e) {
-                if (!e.isDefaultPrevented()) {
-                var id = $('#id').val();
-                if (save_method == 'add') url = "{{ url('pelanggan') }}";
-                else url = "{{ url('pelanggan') . '/' }}" + id;
+    /////////////////
+    // Tambah Data //
+    /////////////////
+    $(function () {
+        $('#form-cu form').on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
+            var id = $('#id').val();
+            if (save_method == 'add') url = "{{ secure_url('pelanggan') }}";
+            else url = "{{ secure_url('pelanggan') . '/' }}" + id;
 
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: $("#form-cu form").serialize(),
-                        success: function($data) {
-                            $("#form-cu").modal('hide');
-                            table.ajax.reload();
-                            
-                            if (save_method == 'add') {
-                                toastr.success('Data Berhasil Ditambahkan','Sukses');
-                            } else {
-                                toastr.success('Data Berhasil Diperbharui','Sukses');
-                            }
-                        },
-                        error: function () {
-                            alert("Opps! Error...!");
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $("#form-cu form").serialize(),
+                    success: function($data) {
+                        $("#form-cu").modal('hide');
+                        table.ajax.reload();
+                        
+                        if (save_method == 'add') {
+                            toastr.success('Data Berhasil Ditambahkan','Sukses');
+                        } else {
+                            toastr.success('Data Berhasil Diperbharui','Sukses');
                         }
-                    });
-                    return false;
-                }
-            });
+                    },
+                    error: function () {
+                        alert("Opps! Error...!");
+                    }
+                });
+                return false;
+            }
         });
+    });
 
-        ///////////////
-        // Ubah Data //
-        /////////////
-        function update(id) {
-            save_method = "edit";
-            $('input[name=_method]').val('PATCH');
-            $('#form-cu form')[0].reset();
+    ///////////////
+    // Ubah Data //
+    /////////////
+    function update(id) {
+        save_method = "edit";
+        $('input[name=_method]').val('PATCH');
+        $('#form-cu form')[0].reset();
 
-            $.ajax({
-                url: "{{ url('pelanggan') }}" + '/' + id + '/edit',
-                type: "GET",
-                dataType: "JSON",
-                success: function (jquin) {
-                    $('#form-cu').modal('show');
-                    $('.modal-title').text('Edit Pelanggan');
+        $.ajax({
+            url: "{{ secure_url('pelanggan') }}" + '/' + id + '/edit',
+            type: "GET",
+            dataType: "JSON",
+            success: function (jquin) {
+                $('#form-cu').modal('show');
+                $('.modal-title').text('Edit Pelanggan');
 
-                    $('#id').val(jquin.id);
-                    $('#namaPelanggan').val(jquin.nama);
-                    $('input[name=jk][value='+ jquin.jenis_kelamin +']')[0].checked = true;
-                    $('#noTelpon').val(jquin.tlp);
-                    $('#alamat').val(jquin.alamat);
+                $('#id').val(jquin.id);
+                $('#namaPelanggan').val(jquin.nama);
+                $('input[name=jk][value='+ jquin.jenis_kelamin +']')[0].checked = true;
+                $('#noTelpon').val(jquin.tlp);
+                $('#alamat').val(jquin.alamat);
 
-                    console.log(jquin.jenis_kelamin);
-                },
-                error : function () {
-                    Swal.fire(
-                      'Opps!',
-                      'Terjadi Error...!',
-                      'error',
-                      '1500'
-                    )
-                }
-            });
-        }
+                console.log(jquin.jenis_kelamin);
+            },
+            error : function () {
+                Swal.fire(
+                  'Opps!',
+                  'Terjadi Error...!',
+                  'error',
+                  '1500'
+                )
+            }
+        });
+    }
 
-        /////////////////
-        // Hapus Data  //
-        /////////////////
-        function destroy(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-  
-            Swal.fire({
-              title: 'Hapus!',
-              text: "Pelanggan Dengan ID "+ id +"?",
-              type: 'warning',
-              showCancelButton: true,
-              cancelButtonColor: '#d33',
-              cancelButtonText: 'Batal',
-              confirmButtonColor: '#00B5B8',
-              confirmButtonText: 'Oke',
-              reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ url('pelanggan') }}" + '/' + id,
-                        type: "POST",
-                        data: {'_method' : 'DELETE', '_token' : csrf_token},
-                        success: function (data) {
-                            toastr.success('Data Berhasil Dihapus','Sukses');
-                            table.ajax.reload();
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    })
-                }
-            })
-        }
-    </script>
+    /////////////////
+    // Hapus Data  //
+    /////////////////
+    function destroy(id) {
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+          title: 'Hapus!',
+          text: "Pelanggan Dengan ID "+ id +"?",
+          type: 'warning',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Batal',
+          confirmButtonColor: '#00B5B8',
+          confirmButtonText: 'Oke',
+          reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: "{{ secure_url('pelanggan') }}" + '/' + id,
+                    type: "POST",
+                    data: {'_method' : 'DELETE', '_token' : csrf_token},
+                    success: function (data) {
+                        toastr.success('Data Berhasil Dihapus','Sukses');
+                        table.ajax.reload();
+                    },
+                    error: function () {
+                        Swal.fire(
+                          'Opps!',
+                          'Terjadi Error...!',
+                          'error',
+                          '1500'
+                        )
+                    }
+                })
+            }
+        })
+    }
+</script>
 @stop

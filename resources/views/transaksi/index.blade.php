@@ -95,31 +95,31 @@
         toastr.success('Transaksi Berhasil Diperbharui','Sukses');
     </script>
     @endif
-    <script>
-        // Custom Select Option
-        $(".select2").select2();
-        
-        // Data Table
-        var table = $('#data-transaksi').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('json.transaksi') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'Invoice', name: 'Invoice'},
-                    {data: 'Pelanggan', name: 'Pelanggan'},
-                    {data: 'tgl', name: 'tgl'},
-                    {data: 'Outlet', name: 'Outlet'},
-                    {data: 'Kasir', name: 'Kasir'},
-                    {data: 'status', name: 'status'},
-                    {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
+<script>
+    // Custom Select Option
+    $(".select2").select2();
 
-        $(document).ready(function() {
+    // Data Table
+    var table = $('#data-transaksi').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/transaksi') }}", // Use secure_url for the JSON endpoint
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+            { data: 'Invoice', name: 'Invoice' },
+            { data: 'Pelanggan', name: 'Pelanggan' },
+            { data: 'tgl', name: 'tgl' },
+            { data: 'Outlet', name: 'Outlet' },
+            { data: 'Kasir', name: 'Kasir' },
+            { data: 'status', name: 'status' },
+            { data: 'opsi', name: 'opsi', orderable: false, searchable: false }
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
+
+    $(document).ready(function () {
         // Hide
         $('#hideElmen').hide();
 
@@ -127,7 +127,7 @@
         $('#pelanggan').on('change', function (e) {
             var idPelanggan = e.target.value;
 
-            $.get('/json/'+idPelanggan+'/cari-pelanggan', function (data) {
+            $.get('{{ secure_url("/json") }}/' + idPelanggan + '/cari-pelanggan', function (data) {
                 $('#hideElmen').show();
                 $('#tlp_pelanggan').val(data.tlp);
                 $('#alamat_pelanggan').val(data.alamat);
@@ -135,106 +135,102 @@
         });
     });
 
-        function status(id) {
-            $('input[name=_method]').val('PATCH');
-            $('#form-status').modal('show');
-            $('#form-status form')[0].reset();
+    function status(id) {
+        $('input[name=_method]').val('PATCH');
+        $('#form-status').modal('show');
+        $('#form-status form')[0].reset();
 
-            $.ajax({
-                url: "/json/"+id+"/status",
-                type: "GET",
-                dataType: "JSON",
-                success: function (jquin) {
-                    $('#id').val(jquin.id);
-                    $('#status_pesanan').val(jquin.status);
-                },
-                error : function () {
-                    Swal.fire(
-                      'Opps!',
-                      'Terjadi Error...!',
-                      'error',
-                      '1500'
-                    )
-                }
-            });
-        }
-
-        $(function () {
-             $('#form-status form').on('submit', function (e) {
-                if (!e.isDefaultPrevented()) {
-                var id = $('#id').val();
-                url = "/status/"+id+"/update";
-
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: $("#form-status form").serialize(),
-                        success: function($data) {
-                            $("#form-status").modal('hide');
-                            table.ajax.reload();
-                            toastr.success('Status Berhasil Diperbharui','Sukses');
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    });
-                    return false;
-                }
-            });
+        $.ajax({
+            url: "{{ secure_url('json') }}/" + id + "/status",
+            type: "GET",
+            dataType: "JSON",
+            success: function (jquin) {
+                $('#id').val(jquin.id);
+                $('#status_pesanan').val(jquin.status);
+            },
+            error: function () {
+                Swal.fire(
+                    'Opps!',
+                    'Terjadi Error...!',
+                    'error',
+                    '1500'
+                )
+            }
         });
+    }
 
+    $(function () {
+        $('#form-status form').on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
+                var id = $('#id').val();
+                url = "{{ secure_url('/status') }}/" + id + "/update";
 
-        /////////////////
-        // Tampil Form //
-        /////////////////
-        function tampilForm() {
-            $('#form-cu').modal('show');
-            $('#form-cu form')[0].reset();
-            $('#form-store-outlet').text("Tambah Data");
-        }
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $("#form-status form").serialize(),
+                    success: function ($data) {
+                        $("#form-status").modal('hide');
+                        table.ajax.reload();
+                        toastr.success('Status Berhasil Diperbharui', 'Sukses');
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Opps!',
+                            'Terjadi Error...!',
+                            'error',
+                            '1500'
+                        )
+                    }
+                });
+                return false;
+            }
+        });
+    });
 
-        /////////////////
-        // Hapus Data  //
-        /////////////////
-        function destroy(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-  
-            Swal.fire({
-              title: 'Hapus!',
-              text: "Transaksi Dengan ID "+ id +"?",
-              type: 'warning',
-              showCancelButton: true,
-              cancelButtonColor: '#d33',
-              cancelButtonText: 'Batal',
-              confirmButtonColor: '#00B5B8',
-              confirmButtonText: 'Oke',
-              reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ url('transaksi') }}" + '/' + id,
-                        type: "POST",
-                        data: {'_method' : 'DELETE', '_token' : csrf_token},
-                        success: function (data) {
-                            toastr.success('Data Berhasil Dihapus','Sukses');
-                            table.ajax.reload();
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    })
-                }
-            })
-        }
-    </script>
+    // Tampil Form
+    function tampilForm() {
+        $('#form-cu').modal('show');
+        $('#form-cu form')[0].reset();
+        $('#form-store-outlet').text("Tambah Data");
+    }
+
+    // Hapus Data
+    function destroy(id) {
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+            title: 'Hapus!',
+            text: "Transaksi Dengan ID " + id + "?",
+            type: 'warning',
+            showCancelButton: true,
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#00B5B8',
+            confirmButtonText: 'Oke',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: "{{ secure_url('transaksi') }}" + '/' + id,
+                    type: "POST",
+                    data: { '_method': 'DELETE', '_token': csrf_token },
+                    success: function (data) {
+                        toastr.success('Data Berhasil Dihapus', 'Sukses');
+                        table.ajax.reload();
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Opps!',
+                            'Terjadi Error...!',
+                            'error',
+                            '1500'
+                        )
+                    }
+                })
+            }
+        })
+    }
+</script>
+
 @stop

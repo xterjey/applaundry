@@ -67,22 +67,22 @@
     <script src="{{asset('admin/app-assets/js/scripts/extensions/sweet-alerts.min.js')}}"></script>
     <script src="{{asset('admin/app-assets/vendors/js/extensions/toastr.min.js')}}"></script>
     <script src="{{asset('admin/app-assets/vendors/js/forms/select/select2.full.min.js')}}"></script>
+<script>
+    // Data Table
+    var table = $('#data-outlet').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/outlet/owner') }}",  // Change this line to use secure_url
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+            { data: 'nama', name: 'nama' },
+            { data: 'tlp', name: 'tlp' },
+            { data: 'alamat', name: 'alamat', orderable: false, searchable: false }
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
+</script>
    
-    <script>
-        // Data Table
-    	var table = $('#data-outlet').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('json.outlet.owner') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'nama', name: 'nama'},
-                    {data: 'tlp', name: 'tlp'},
-                    {data: 'alamat', name: 'alamat', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
-    </script>
 @stop

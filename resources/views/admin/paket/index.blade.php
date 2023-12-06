@@ -62,22 +62,23 @@
     <script>
         $(".select2").select2();
     </script>
-    <script>
-        // Data Table
-    	var table = $('#data-paket').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('json.paket.outlet') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'nama', name: 'nama'},
-                    {data: 'tlp', name: 'tlp'},
-                    {data: 'jml_paket', name: 'jml_paket'},
-                    {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
-    </script>
+<script>
+    // Data Table
+    var table = $('#data-paket').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/paket/outlet') }}",
+        columns: [
+            {data: 'DT_RowIndex', name:'DT_RowIndex'},
+            {data: 'nama', name: 'nama'},
+            {data: 'tlp', name: 'tlp'},
+            {data: 'jml_paket', name: 'jml_paket'},
+            {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
+</script>
+
 @stop

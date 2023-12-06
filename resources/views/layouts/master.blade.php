@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description" content="Aplikasi Laundry Ujikom By - Roni Surya">
+    <meta name="description" content="Aplikasi Laundry XTERJEY">
     <meta name="keywords" content="Aplikasi Laundry">
     <meta name="author" content="JQuin">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -77,7 +77,7 @@
     <!-- BEGIN: Footer-->
     <footer class="footer footer-static footer-light navbar-border">
       <p class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2"><span class="float-md-left d-block d-md-inline-block">
-         Copyright © <script>document.write(new Date().getFullYear());</script>. Dikembangkan Oleh - Roni Surya
+         Copyright © <script>document.write(new Date().getFullYear());</script>.XTERJEY
       </span></p>
     </footer>
     <!-- END: Footer-->

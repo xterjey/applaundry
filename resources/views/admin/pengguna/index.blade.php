@@ -66,141 +66,142 @@
     <script src="{{asset('admin/app-assets/vendors/js/extensions/sweetalert2.all.min.js')}}"></script>
     <script src="{{asset('admin/app-assets/js/scripts/extensions/sweet-alerts.min.js')}}"></script>
     <script src="{{asset('admin/app-assets/vendors/js/extensions/toastr.min.js')}}"></script>
-    
-    <script>
-        // Data Table
-    	var table = $('#data-pengguna').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('json.pengguna') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name:'DT_RowIndex'},
-                    {data: 'nama_lengkap', name: 'nama_lengkap'},
-                    {data: 'username', name: 'username'},
-                    {data: 'role', name: 'role'},
-                    {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
-                ],
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 }
-                 ]
-            });
+<script>
+    // Data Table
+    var table = $('#data-pengguna').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ secure_url('json/pengguna') }}",
+        columns: [
+            {data: 'DT_RowIndex', name:'DT_RowIndex'},
+            {data: 'nama_lengkap', name: 'nama_lengkap'},
+            {data: 'username', name: 'username'},
+            {data: 'role', name: 'role'},
+            {data: 'opsi', name: 'opsi', orderable: false, searchable: false}
+        ],
+        "columnDefs": [
+            { "width": "5%", "targets": 0 }
+        ]
+    });
 
-        /////////////////
-        // Tampil Form //
-        /////////////////
-        function tampilForm() {
-            save_method = "add";
-            $('input[name=_method]').val('POST');
-            $('#form-cu').modal('show');
-            $('#form-cu form')[0].reset();
-            $('#form-store-pengguna').text("Tambah Pengguna");
-            $('.hPass').show();
-        }
+    /////////////////
+    // Tampil Form //
+    /////////////////
+    function tampilForm() {
+        save_method = "add";
+        $('input[name=_method]').val('POST');
+        $('#form-cu').modal('show');
+        $('#form-cu form')[0].reset();
+        $('#form-store-pengguna').text("Tambah Pengguna");
+        $('.hPass').show();
+    }
 
-        /////////////////
-        // Tambah Data //
-        /////////////////
-        $(function () {
-             $('#form-cu form').on('submit', function (e) {
-                if (!e.isDefaultPrevented()) {
-                var id = $('#id').val();
-                if (save_method == 'add') url = "{{ url('pengguna') }}";
-                else url = "{{ url('pengguna') . '/' }}" + id;
+    /////////////////
+    // Tambah Data //
+    /////////////////
+    $(function () {
+        $('#form-cu form').on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
+            var id = $('#id').val();
+            if (save_method == 'add') url = "{{ secure_url('pengguna') }}";
+            else url = "{{ secure_url('pengguna') . '/' }}" + id;
 
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: $("#form-cu form").serialize(),
-                        success: function($data) {
-                            $("#form-cu").modal('hide');
-                            table.ajax.reload();
-                            
-                            if (save_method == 'add') {
-                                toastr.success('Data Berhasil Ditambahkan','Sukses');
-                            } else {
-                                toastr.success('Data Berhasil Diperbharui','Sukses');
-                            }
-                        },
-                        error: function () {
-                            alert("Opps! Error...!");
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $("#form-cu form").serialize(),
+                    success: function($data) {
+                        $("#form-cu").modal('hide');
+                        table.ajax.reload();
+
+                        if (save_method == 'add') {
+                            toastr.success('Data Berhasil Ditambahkan','Sukses');
+                        } else {
+                            toastr.success('Data Berhasil Diperbharui','Sukses');
                         }
-                    });
-                    return false;
-                }
-            });
+                    },
+                    error: function () {
+                        alert("Opps! Error...!");
+                    }
+                });
+                return false;
+            }
         });
+    });
 
-        ///////////////
-        // Ubah Data //
-        /////////////
-        function update(id) {
-            save_method = "edit";
-            $('input[name=_method]').val('PATCH');
-            $('#form-cu form')[0].reset();
+    ///////////////
+    // Ubah Data //
+    /////////////
+    function update(id) {
+        save_method = "edit";
+        $('input[name=_method]').val('PATCH');
+        $('#form-cu form')[0].reset();
 
-            $.ajax({
-                url: "{{ url('pengguna') }}" + '/' + id + '/edit',
-                type: "GET",
-                dataType: "JSON",
-                success: function (jquin) {
-                    $('#form-cu').modal('show');
-                    $('.modal-title').text('Edit Pengguna');
-                    $('.hPass').hide();
+        $.ajax({
+            url: "{{ secure_url('pengguna') }}" + '/' + id + '/edit',
+            type: "GET",
+            dataType: "JSON",
+            success: function (jquin) {
+                $('#form-cu').modal('show');
+                $('.modal-title').text('Edit Pengguna');
+                $('.hPass').hide();
 
-                    $('#id').val(jquin.id);
-                    $('#namaLengkap').val(jquin.nama);
-                    $('#username').val(jquin.username);
-                    $('#password').val(jquin.username);
-                    $('#role').val(jquin.role);
-                },
-                error : function () {
-                    Swal.fire(
-                      'Opps!',
-                      'Terjadi Error...!',
-                      'error',
-                      '1500'
-                    )
-                }
-            });
-        }
+                $('#id').val(jquin.id);
+                $('#namaLengkap').val(jquin.nama);
+                $('#username').val(jquin.username);
+                $('#password').val(jquin.username);
+                $('#role').val(jquin.role);
+            },
+            error : function () {
+                Swal.fire(
+                    'Opps!',
+                    'Terjadi Error...!',
+                    'error',
+                    '1500'
+                )
+            }
+        });
+    }
 
-        /////////////////
-        // Hapus Data  //
-        /////////////////
-        function destroy(id) {
-            var csrf_token = $('meta[name="csrf-token"]').attr('content');
-  
-            Swal.fire({
-              title: 'Hapus!',
-              text: "Pengguna Dengan ID "+ id +"?",
-              type: 'warning',
-              showCancelButton: true,
-              cancelButtonColor: '#d33',
-              cancelButtonText: 'Batal',
-              confirmButtonColor: '#00B5B8',
-              confirmButtonText: 'Oke',
-              reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ url('pengguna') }}" + '/' + id,
-                        type: "POST",
-                        data: {'_method' : 'DELETE', '_token' : csrf_token},
-                        success: function (data) {
-                            toastr.success('Data Berhasil Dihapus','Sukses');
-                            table.ajax.reload();
-                        },
-                        error: function () {
-                            Swal.fire(
-                              'Opps!',
-                              'Terjadi Error...!',
-                              'error',
-                              '1500'
-                            )
-                        }
-                    })
-                }
-            })
-        }
-    </script>
+    /////////////////
+    // Hapus Data  //
+    /////////////////
+    function destroy(id) {
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        Swal.fire({
+            title: 'Hapus!',
+            text: "Pengguna Dengan ID "+ id +"?",
+            type: 'warning',
+            showCancelButton: true,
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#00B5B8',
+            confirmButtonText: 'Oke',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: "{{ secure_url('pengguna') }}" + '/' + id,
+                    type: "POST",
+                    data: {'_method' : 'DELETE', '_token' : csrf_token},
+                    success: function (data) {
+                        toastr.success('Data Berhasil Dihapus','Sukses');
+                        table.ajax.reload();
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Opps!',
+                            'Terjadi Error...!',
+                            'error',
+                            '1500'
+                        )
+                    }
+                })
+            }
+        })
+    }
+</script>
+
+
 @stop

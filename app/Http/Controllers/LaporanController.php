@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
 use App\Models\Outlet; // Added this line
-use App\Outlet_User;
+use App\Models\Outlet_User;
 use Yajra\DataTables\Datatables;
 use DB;
 use App\Exports\LaporanExport;

@@ -88,7 +88,7 @@
                                     </form>
                                 </div>
                                 <p class="card-subtitle line-on-side text-muted text-center font-small-3 mx-2 my-1"><span>
-                                    Copyright © <script>document.write(new Date().getFullYear());</script>. Dikembangkan Oleh - Roni Surya
+                                    Copyright © <script>document.write(new Date().getFullYear());</script>. XTERJEY
                                 </span>
                             </p>
                             </div>
